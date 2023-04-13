@@ -1,29 +1,22 @@
-import 'package:coinomy/register.dart';
+import 'package:coinomy/main.dart';
 import 'package:flutter/material.dart';
 
 const double FONT_TITLE_SIZE = 20;
 const Color LIGHT_COLOR = Color.fromARGB(255, 41, 160, 182);
 const Color DARK_COLOR = Color.fromARGB(255, 35, 3, 80);
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class Register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        //appBar: AppBar(title: const Text('LOGIN')),
-        body: _Login(),
+        body: _Register(),
       ),
     );
   }
 }
 
-class _Login extends StatelessWidget {
+class _Register extends StatelessWidget {
   //String email = 'teste@gmail.com';
   //String pass = 'abc';
   @override
@@ -47,7 +40,7 @@ class _Login extends StatelessWidget {
                 Container(
                     child: Center(
                         child: Text(
-                  'Acesse Sua Conta',
+                  'Cadastre-se',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: FONT_TITLE_SIZE,
@@ -56,7 +49,15 @@ class _Login extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
+                CustomTextField(context, 'Nome'),
+                const SizedBox(
+                  height: 20,
+                ),
                 CustomTextField(context, 'Email'),
+                const SizedBox(
+                  height: 20,
+                ),
+                CustomTextField(context, 'Senha'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -69,7 +70,7 @@ class _Login extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                     child: ElevatedButton(
                       child: const Text(
-                        'Login',
+                        'Cadastrar',
                         style: TextStyle(
                           color: DARK_COLOR,
                           fontWeight: FontWeight.bold,
@@ -90,13 +91,10 @@ class _Login extends StatelessWidget {
                 ),
                 TextButton(
                   child: const Text(
-                    'Não possui uma conta? Crie agora mesmo!',
+                    'Já possui uma conta? Acesse sua conta!',
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return Register();
-                    }));
+                    Navigator.pop(context);
                   },
                 ),
               ]))
@@ -131,75 +129,3 @@ Widget CustomTextField(context, String labelString) {
             ))),
   );
 }
-
-/*
- enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 1,
-                                  color: LIGHT_COLOR,
-                                ),
-                              )
-
-*/
-
-/*
- Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'e-mail',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
-                cursorColor: Color.fromARGB(255, 94, 14, 14),
-                obscureText: true,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Senha',
-                ),
-              ),
-            ),
-            TextButton(
-              child: const Text(
-                'Esqueci a senha',
-              ),
-              onPressed: () {
-                //Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //  return recuperarsenha();
-                //}));
-              },
-            ),
-            Container(
-                height: 50,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: ElevatedButton(
-                  child: const Text('Login'),
-                  onPressed: () {
-                    //Navigator.push(context,
-                    //    MaterialPageRoute(builder: (context) {
-                    //  return MenuPrincipal();
-                    //}));
-                  },
-                )),
-            Row(
-              children: <Widget>[
-                const Text('Não possui conta?'),
-                TextButton(
-                  child: const Text(
-                    'Cadastre aqui',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onPressed: () {
-                    print('Cadastro aqui');
-                  },
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          ],
-*/
