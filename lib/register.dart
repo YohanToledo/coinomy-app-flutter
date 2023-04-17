@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:coinomy/main.dart';
 import 'package:flutter/material.dart';
 
@@ -8,10 +10,8 @@ const Color DARK_COLOR = Color.fromARGB(255, 35, 3, 80);
 class Register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: _Register(),
-      ),
+    return Scaffold(
+      body: _Register(),
     );
   }
 }
@@ -28,13 +28,13 @@ class _Register extends StatelessWidget {
             alignment: Alignment.center,
             padding: const EdgeInsets.all(10),
             width: 100,
-            height: MediaQuery.of(context).size.height * 0.40,
+            height: MediaQuery.of(context).size.height * 0.30,
             color: LIGHT_COLOR,
           ),
           Container(
               alignment: Alignment.center,
               padding: const EdgeInsets.all(10),
-              height: MediaQuery.of(context).size.height * 0.60,
+              height: MediaQuery.of(context).size.height * 0.70,
               color: DARK_COLOR,
               child: ListView(children: <Widget>[
                 Container(
@@ -116,6 +116,10 @@ Widget CustomTextField(context, String labelString) {
     child: Center(
         child: TextFormField(
             style: TextStyle(color: Colors.white),
+            obscureText: labelString == 'Senha',
+            keyboardType: labelString == 'Email'
+                ? TextInputType.emailAddress
+                : TextInputType.text,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               enabledBorder: const OutlineInputBorder(
