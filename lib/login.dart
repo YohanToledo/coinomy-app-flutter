@@ -1,3 +1,4 @@
+import 'package:coinomy/global-constants.dart';
 import 'package:coinomy/home.dart';
 import 'package:coinomy/register.dart';
 import 'package:flutter/material.dart';

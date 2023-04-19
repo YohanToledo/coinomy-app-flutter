@@ -1,11 +1,8 @@
 import 'dart:html';
 
+import 'package:coinomy/global-constants.dart';
 import 'package:coinomy/main.dart';
 import 'package:flutter/material.dart';
-
-const double FONT_TITLE_SIZE = 20;
-const Color LIGHT_COLOR = Color.fromARGB(255, 41, 160, 182);
-const Color DARK_COLOR = Color.fromARGB(255, 35, 3, 80);
 
 class Register extends StatelessWidget {
   @override
