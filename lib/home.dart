@@ -6,64 +6,36 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.all(0),
-            child: ListView(children: <Widget>[
-              Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(10),
-                width: 100,
-                height: 600, //MediaQuery.of(context).size.height * 0.8,
-                color: DARK_COLOR,
-                child: ListView(children: <Widget>[
-                  SizedBox(
-                    height: 5,
-                  ),
-                  TopButtons(context),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  BalancoMensal(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TotalReceitasDespesas()
-                ]),
-              ),
-            ])),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: LIGHT_COLOR, width: 1.0))),
-          child: BottomNavigationBar(
-            showSelectedLabels: false,
-            showUnselectedLabels: true,
-            backgroundColor: DARK_COLOR,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  color: LIGHT_COLOR,
+      body: Padding(
+          padding: const EdgeInsets.all(0),
+          child: ListView(children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(5),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: DARK_COLOR,
+              child: ListView(children: <Widget>[
+                SizedBox(
+                  height: 5,
                 ),
-                label: "",
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    color: LIGHT_COLOR,
-                  ),
-                  label: "",
-                  backgroundColor: DARK_COLOR),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    CupertinoIcons.ellipsis,
-                    color: LIGHT_COLOR,
-                  ),
-                  label: "",
-                  backgroundColor: DARK_COLOR),
-            ],
-          ),
-        ));
+                TopButtons(context),
+                SizedBox(
+                  height: 30,
+                ),
+                BalancoMensal(),
+                SizedBox(
+                  height: 20,
+                ),
+                TotalReceitasDespesas(),
+                SizedBox(
+                  height: 30,
+                ),
+                Listagem(context),
+              ]),
+            ),
+          ])),
+    );
   }
 }
 
@@ -110,10 +82,10 @@ Widget TopButtons(BuildContext context) {
 
 Widget TotalReceitasDespesas() {
   return Container(
-      height: 80,
+      height: 30,
       width: 100,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Center(
               child: Text(
@@ -134,6 +106,61 @@ Widget TotalReceitasDespesas() {
               fontSize: FONT_TITLE_SIZE,
             ),
           )),
+        ],
+      ));
+}
+
+Widget Listagem(context) {
+  return Container(
+    height: 300,
+    margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+    child: ListView(children: <Widget>[
+      Card(context, Colors.red),
+      Card(context, Colors.red),
+      Card(context, Colors.green),
+      Card(context, Colors.green),
+      Card(context, Colors.green),
+      Card(context, Colors.red),
+    ]),
+  );
+}
+
+Widget Card(context, Color color) {
+  return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      height: 50,
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      margin: EdgeInsets.fromLTRB(0, 6, 0, 6),
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(5), color: color),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const <Widget>[
+          Icon(
+            Icons.local_gas_station,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Text(
+            'combustivel',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: FONT_TITLE_SIZE,
+            ),
+          ),
+          SizedBox(
+            width: 30,
+          ),
+          Text(
+            'R\$ 150.00',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: FONT_TITLE_SIZE,
+            ),
+          ),
         ],
       ));
 }
