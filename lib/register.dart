@@ -27,6 +27,7 @@ class _Register extends StatelessWidget {
             width: 100,
             height: MediaQuery.of(context).size.height * 0.30,
             color: LIGHT_COLOR,
+            child: Image.asset('assets/images/logo-dark.png'),
           ),
           Container(
               alignment: Alignment.center,

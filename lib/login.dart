@@ -3,8 +3,29 @@ import 'package:coinomy/home.dart';
 import 'package:coinomy/register.dart';
 import 'package:coinomy/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class Login extends StatelessWidget {
+import 'package:flutter/services.dart' show rootBundle;
+
+class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
+
+  @override
+  _loginState createState() {
+    return _loginState();
+  }
+}
+
+class _loginState extends State<Login> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _senhaController = TextEditingController();
+  bool _ocultaSenha = false;
+  @override
+  void initState() {
+    super.initState();
+    _ocultaSenha = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +38,7 @@ class Login extends StatelessWidget {
               width: 100,
               height: MediaQuery.of(context).size.height * 0.40,
               color: LIGHT_COLOR,
+              child: Image.asset('assets/images/logo-dark.png'),
             ),
             Container(
                 alignment: Alignment.center,
@@ -59,10 +81,15 @@ class Login extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: LIGHT_COLOR),
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Screens();
-                          }));
+                          if (validarAcesso(
+                              _emailController.text, _senhaController.text)) {
+                            print(apiLogin(
+                                _emailController.text, _senhaController.text));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return Screens();
+                            }));
+                          }
                         },
                       )),
                   const SizedBox(
@@ -81,6 +108,32 @@ class Login extends StatelessWidget {
           ])),
     );
   }
+
+  Widget CustomTextField(context, String labelString) {
+    IconData? icon = ICONS[labelString.toLowerCase()];
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+      child: Center(
+          child: TextFormField(
+              controller: labelString.toUpperCase() == 'EMAIL'
+                  ? _emailController
+                  : _senhaController,
+              obscureText: labelString.toUpperCase() == 'SENHA',
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: const BorderSide(color: LIGHT_COLOR, width: 0.0),
+                ),
+                label: Text(
+                  labelString,
+                  style: TextStyle(color: LIGHT_COLOR),
+                ),
+                prefixIcon: Icon(icon, color: LIGHT_COLOR),
+              ))),
+    );
+  }
 }
 
 const ICONS = {
@@ -89,24 +142,18 @@ const ICONS = {
   "nome": Icons.person,
 };
 
-Widget CustomTextField(context, String labelString) {
-  IconData? icon = ICONS[labelString.toLowerCase()];
+validarAcesso(String email, String senha) {
+  String _email = "admin@teste";
+  String _senha = "321";
 
-  return Container(
-    padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
-    child: Center(
-        child: TextFormField(
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: const BorderSide(color: LIGHT_COLOR, width: 0.0),
-              ),
-              label: Text(
-                labelString,
-                style: TextStyle(color: LIGHT_COLOR),
-              ),
-              prefixIcon: Icon(icon, color: LIGHT_COLOR),
-            ))),
-  );
+  if (email == _email && senha == _senha) {
+    return true;
+  }
+
+  return false;
+}
+
+Future<http.Response> apiLogin(String email, String senha) {
+  return http.post(Uri.parse('http://186.237.58.195:8080/api/v1/auth/login'),
+      body: {'email': email, 'password': senha});
 }
