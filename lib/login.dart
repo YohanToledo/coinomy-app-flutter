@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:coinomy/global-constants.dart';
 import 'package:coinomy/home.dart';
+import 'package:coinomy/http_service.dart';
 import 'package:coinomy/register.dart';
 import 'package:coinomy/screens.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +86,7 @@ class _loginState extends State<Login> {
                         onPressed: () {
                           if (validarAcesso(
                               _emailController.text, _senhaController.text)) {
-                            print(apiLogin(
+                            print(HttpService().login(
                                 _emailController.text, _senhaController.text));
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
@@ -151,9 +154,4 @@ validarAcesso(String email, String senha) {
   }
 
   return false;
-}
-
-Future<http.Response> apiLogin(String email, String senha) {
-  return http.post(Uri.parse('http://186.237.58.195:8080/api/v1/auth/login'),
-      body: {'email': email, 'password': senha});
 }
