@@ -86,8 +86,8 @@ class _loginState extends State<Login> {
                         onPressed: () {
                           if (validarAcesso(
                               _emailController.text, _senhaController.text)) {
-                            print(HttpService().login(
-                                _emailController.text, _senhaController.text));
+                            /*print(HttpService().login(
+                                _emailController.text, _senhaController.text));*/
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return Screens();

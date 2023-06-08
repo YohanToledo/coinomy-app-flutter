@@ -1,6 +1,6 @@
-import 'package:coinomy/add.dart';
 import 'package:coinomy/home.dart';
 import 'package:coinomy/preferences.dart';
+import 'package:coinomy/transactions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class Screens extends StatefulWidget {
 
 class _ScreenState extends State<Screens> {
   int currentTabIndex = 0;
-  List<Widget> tabs = [Home(), Add(), Preferences()];
+  List<Widget> tabs = [Home(), Transactions(), Preferences()];
   onTapped(int index) {
     setState(() {
       currentTabIndex = index;
