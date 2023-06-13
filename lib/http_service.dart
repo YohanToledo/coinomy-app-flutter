@@ -1,20 +1,31 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
+final options = BaseOptions(
+  baseUrl: 'http://186.237.58.195:8080/api/v1/',
+  connectTimeout: Duration(seconds: 15),
+  receiveTimeout: Duration(seconds: 15),
+);
+final dio = Dio(options);
 
 class HttpService {
-  final String BACKEND_URL = "http://186.237.58.195:8080/api/v1/auth/login";
+  void createAuthToken(String email, String senha) async {
+    try {
+      final response = await dio.post('/auth/login',
+          data: {'email': email, 'password': senha},
+          options: Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status != 500;
+            },
+          ));
+      print(response.statusCode);
 
-  Future<bool> login(String email, String senha) async {
-    http.Response res = await http.post(Uri.parse(BACKEND_URL),
-        body: {'email': email, 'password': senha});
-
-    final body = jsonDecode(res.body);
-    print(body);
-
-    if (body.statusCode == 200) {
-      return true;
+      if (response.statusCode == 201) {
+        print('successfull authentication');
+      }
+    } catch (error) {
+      print('Server returned error 500');
     }
-
-    return false;
   }
 }

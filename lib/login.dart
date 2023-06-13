@@ -6,7 +6,6 @@ import 'package:coinomy/http_service.dart';
 import 'package:coinomy/register.dart';
 import 'package:coinomy/screens.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -84,10 +83,10 @@ class _loginState extends State<Login> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: LIGHT_COLOR),
                         onPressed: () {
+                          HttpService().createAuthToken(
+                              _emailController.text, _senhaController.text);
                           if (validarAcesso(
                               _emailController.text, _senhaController.text)) {
-                            /*print(HttpService().login(
-                                _emailController.text, _senhaController.text));*/
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
                               return Screens();
