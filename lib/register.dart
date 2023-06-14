@@ -151,7 +151,7 @@ Widget CustomTextField(context, String labelString, controller) {
                 ? TextInputType.emailAddress
                 : TextInputType.text,
             decoration: InputDecoration(
-              // errorText: validateEmptyField(controller.text),
+              errorText: validateEmptyField(controller.text),
               border: OutlineInputBorder(),
               enabledBorder: const OutlineInputBorder(
                 borderSide: const BorderSide(color: LIGHT_COLOR, width: 0.0),
@@ -165,9 +165,9 @@ Widget CustomTextField(context, String labelString, controller) {
   );
 }
 
-String validateEmptyField(String value) {
-  if (value.isNotEmpty) {
+String? validateEmptyField(String value) {
+  if (value.isEmpty) {
     return "Campo obrigatorio";
   }
-  return '';
+  return null;
 }
