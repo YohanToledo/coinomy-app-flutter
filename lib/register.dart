@@ -1,10 +1,25 @@
 import 'dart:html';
 
 import 'package:coinomy/global-constants.dart';
+import 'package:coinomy/http_service.dart';
+import 'package:coinomy/login.dart';
 import 'package:coinomy/main.dart';
 import 'package:flutter/material.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  const Register({Key? key}) : super(key: key);
+
+  @override
+  _registerState createState() {
+    return _registerState();
+  }
+}
+
+class _registerState extends State<Register> {
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,8 +29,13 @@ class Register extends StatelessWidget {
 }
 
 class _Register extends StatelessWidget {
+  TextEditingController _nomeController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _senhaController = TextEditingController();
+  TextEditingController _senhaConfirmController = TextEditingController();
   //String email = 'teste@gmail.com';
   //String pass = 'abc';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -47,19 +67,19 @@ class _Register extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                CustomTextField(context, 'Nome'),
+                CustomTextField(context, 'Nome', _nomeController),
                 const SizedBox(
                   height: 20,
                 ),
-                CustomTextField(context, 'Email'),
+                CustomTextField(context, 'Email', _emailController),
                 const SizedBox(
                   height: 20,
                 ),
-                CustomTextField(context, 'Senha'),
+                CustomTextField(context, 'Senha', _senhaController),
                 const SizedBox(
                   height: 20,
                 ),
-                CustomTextField(context, 'Senha'),
+                CustomTextField(context, 'Senha', _senhaConfirmController),
                 const SizedBox(
                   height: 20,
                 ),
@@ -78,10 +98,18 @@ class _Register extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: LIGHT_COLOR),
                       onPressed: () {
-                        //Navigator.push(context,
-                        //    MaterialPageRoute(builder: (context) {
-                        //  return MenuPrincipal();
-                        //}));
+                        HttpService()
+                            .register(_nomeController.text,
+                                _emailController.text, _senhaController.text)
+                            .then((value) => {
+                                  if (value)
+                                    {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return Login();
+                                      }))
+                                    }
+                                });
                       },
                     )),
                 const SizedBox(
@@ -106,19 +134,24 @@ const ICONS = {
   "nome": Icons.person,
 };
 
-Widget CustomTextField(context, String labelString) {
+Widget CustomTextField(context, String labelString, controller) {
   IconData? icon = ICONS[labelString.toLowerCase()];
 
   return Container(
     padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
     child: Center(
         child: TextFormField(
+            enableInteractiveSelection: true,
+            autocorrect: false,
+            enableSuggestions: false,
+            controller: controller,
             style: TextStyle(color: Colors.white),
             obscureText: labelString == 'Senha',
             keyboardType: labelString == 'Email'
                 ? TextInputType.emailAddress
                 : TextInputType.text,
             decoration: InputDecoration(
+              // errorText: validateEmptyField(controller.text),
               border: OutlineInputBorder(),
               enabledBorder: const OutlineInputBorder(
                 borderSide: const BorderSide(color: LIGHT_COLOR, width: 0.0),
@@ -130,4 +163,11 @@ Widget CustomTextField(context, String labelString) {
               prefixIcon: Icon(icon, color: LIGHT_COLOR),
             ))),
   );
+}
+
+String validateEmptyField(String value) {
+  if (value.isNotEmpty) {
+    return "Campo obrigatorio";
+  }
+  return '';
 }

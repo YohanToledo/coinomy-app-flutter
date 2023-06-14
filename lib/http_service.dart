@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 
 final options = BaseOptions(
@@ -9,7 +8,7 @@ final options = BaseOptions(
 final dio = Dio(options);
 
 class HttpService {
-  void createAuthToken(String email, String senha) async {
+  Future<bool> createAuthToken(String email, String senha) async {
     try {
       final response = await dio.post('/auth/login',
           data: {'email': email, 'password': senha},
@@ -19,13 +18,41 @@ class HttpService {
               return status != 500;
             },
           ));
-      print(response.statusCode);
+      print(response);
 
       if (response.statusCode == 201) {
         print('successfull authentication');
+        return true;
       }
+
+      return false;
     } catch (error) {
       print('Server returned error 500');
+      return false;
+    }
+  }
+
+  Future<bool> register(String name, String email, String senha) async {
+    try {
+      final response = await dio.post('/users',
+          data: {'fullName': name, 'email': email, 'password': senha},
+          options: Options(
+            followRedirects: false,
+            validateStatus: (status) {
+              return status != 500;
+            },
+          ));
+      print(response);
+
+      if (response.statusCode == 201) {
+        print('successfull authentication');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      print('Server returned error 500');
+      return false;
     }
   }
 }

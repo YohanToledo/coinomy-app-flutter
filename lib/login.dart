@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:coinomy/global-constants.dart';
-import 'package:coinomy/home.dart';
 import 'package:coinomy/http_service.dart';
 import 'package:coinomy/register.dart';
 import 'package:coinomy/screens.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/services.dart' show rootBundle;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -83,15 +78,19 @@ class _loginState extends State<Login> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: LIGHT_COLOR),
                         onPressed: () {
-                          HttpService().createAuthToken(
-                              _emailController.text, _senhaController.text);
-                          if (validarAcesso(
-                              _emailController.text, _senhaController.text)) {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return Screens();
-                            }));
-                          }
+                          HttpService()
+                              .createAuthToken(
+                                  _emailController.text, _senhaController.text)
+                              .then((value) => {
+                                    if (value)
+                                      {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return Screens();
+                                        }))
+                                      }
+                                  });
                         },
                       )),
                   const SizedBox(
