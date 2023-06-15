@@ -28,14 +28,15 @@ class _ScreenState extends State<Screens> {
         body: tabs[currentTabIndex],
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: LIGHT_COLOR, width: 1.0))),
+            color: Colors.white,
+            //border: Border(top: BorderSide(color: LIGHT_COLOR, width: 1.0)),
+          ),
           child: BottomNavigationBar(
             onTap: onTapped,
             currentIndex: currentTabIndex,
             showSelectedLabels: false,
             showUnselectedLabels: true,
-            backgroundColor: DARK_COLOR,
+            backgroundColor: NAV_BAR_COLOR,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:coinomy/global-constants.dart';
 import 'package:coinomy/home.dart';
 import 'package:coinomy/http_service.dart';
@@ -116,6 +118,14 @@ class _loginState extends State<Login> {
                       height: 50,
                       padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: LIGHT_COLOR),
+                        onPressed: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Screens();
+                        })),
+                        //_login,
+
                         child: const Text(
                           'Login',
                           style: TextStyle(
@@ -124,9 +134,6 @@ class _loginState extends State<Login> {
                             fontSize: 18,
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: LIGHT_COLOR),
-                        onPressed: _login,
                       )),
                   const SizedBox(
                     height: 20,
