@@ -1,4 +1,5 @@
 import 'package:coinomy/global-constants.dart';
+import 'package:coinomy/home.dart';
 import 'package:coinomy/http_service.dart';
 import 'package:coinomy/register.dart';
 import 'package:coinomy/screens.dart';
@@ -21,6 +22,54 @@ class _loginState extends State<Login> {
   void initState() {
     super.initState();
     _ocultaSenha = true;
+  }
+
+  void _login() {
+    setState(() {
+      HttpService()
+          .createAuthToken(_emailController.text, _senhaController.text)
+          .then((value) {
+        if (value) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return Screens();
+          }));
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login efetuado com sucesso!'),
+              backgroundColor: Colors.green,
+              showCloseIcon: true,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Email ou senha inválidos!'),
+              backgroundColor: Colors.red,
+              showCloseIcon: true,
+            ),
+          );
+        }
+      }).catchError((error) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Erro'),
+              content: Text('Ocorreu um erro durante o login.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      });
+    });
   }
 
   @override
@@ -77,21 +126,7 @@ class _loginState extends State<Login> {
                         ),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: LIGHT_COLOR),
-                        onPressed: () {
-                          HttpService()
-                              .createAuthToken(
-                                  _emailController.text, _senhaController.text)
-                              .then((value) => {
-                                    if (value)
-                                      {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return Screens();
-                                        }))
-                                      }
-                                  });
-                        },
+                        onPressed: _login,
                       )),
                   const SizedBox(
                     height: 20,
@@ -142,14 +177,3 @@ const ICONS = {
   "senha": Icons.lock_outline_rounded,
   "nome": Icons.person,
 };
-
-validarAcesso(String email, String senha) {
-  String _email = "admin@teste";
-  String _senha = "321";
-
-  if (email == _email && senha == _senha) {
-    return true;
-  }
-
-  return false;
-}
