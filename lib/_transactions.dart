@@ -2,6 +2,7 @@
 
 import 'package:coinomy/global-constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class Transactions extends StatefulWidget {
@@ -74,6 +75,10 @@ class _TransactionsState extends State<Transactions> {
                   ),
                   keyboardType: TextInputType.number,
                   style: TextStyle(color: Colors.white),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                    CurrencyInputFormatter(),
+                  ],
                 ),
                 SizedBox(height: 16.0),
                 TextFormField(
@@ -193,4 +198,63 @@ class _TransactionsState extends State<Transactions> {
       ),
     );
   }
+}
+
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String numericValue = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (numericValue.length >= 2) {
+      String wholeNumber = numericValue.substring(0, numericValue.length - 2);
+      String decimalPart = numericValue.substring(numericValue.length - 2);
+
+      String formattedWholeNumber = '';
+      for (int i = wholeNumber.length - 1, count = 0; i >= 0; i--, count++) {
+        if (count == 3) {
+          formattedWholeNumber = ',' + formattedWholeNumber;
+          count = 0;
+        }
+        formattedWholeNumber = wholeNumber[i] + formattedWholeNumber;
+      }
+
+      String formattedValue = '$formattedWholeNumber.$decimalPart';
+
+      String finalValue = formattedValue;
+
+      return TextEditingValue(
+        text: finalValue,
+        selection: TextSelection.collapsed(offset: finalValue.length),
+      );
+    }
+
+    return newValue;
+  }
+}
+
+String formatCurrency(String inputValue) {
+  // Remove non-numeric characters
+  String numericValue = inputValue.replaceAll(RegExp(r'\D'), '');
+
+  // Split the value into whole number and decimal parts
+  String wholeNumber = numericValue.substring(0, numericValue.length - 2);
+  String decimalPart = numericValue.substring(numericValue.length - 2);
+
+  // Format the whole number part with commas
+  String formattedWholeNumber = '';
+  for (int i = wholeNumber.length - 1, count = 0; i >= 0; i--, count++) {
+    if (count == 3) {
+      formattedWholeNumber = ',' + formattedWholeNumber;
+      count = 0;
+    }
+    formattedWholeNumber = wholeNumber[i] + formattedWholeNumber;
+  }
+
+  // Combine the formatted whole number and decimal part with a decimal point
+  String formattedValue = '$formattedWholeNumber.$decimalPart';
+
+  return 'R\$ $formattedValue';
 }
