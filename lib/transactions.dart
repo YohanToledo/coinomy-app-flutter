@@ -1,221 +1,302 @@
-import 'package:coinomy/home.dart';
-import 'package:coinomy/register.dart';
-import 'package:coinomy/screens.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'global-constants.dart';
-import 'login.dart';
+// ignore_for_file: prefer_const_constructors
 
-const List<String> list = <String>[
-  'Mercado',
-  'Salario',
-  'Rendimento',
-  'Combustivel'
-];
+import 'package:coinomy/db/database_helper.dart';
+import 'package:coinomy/db/transactions_datasource.dart';
+import 'package:coinomy/global-constants.dart';
+import 'package:coinomy/model/transaction_entity.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class Transactions extends StatefulWidget {
+  final String title;
+  final int transactionId;
+  final String? transactionValue;
+  final String? transactionDate;
+  final String? transactionDescription;
+  final String? transactionBank;
+
+  Transactions({
+    required this.title,
+    required this.transactionId,
+    this.transactionValue,
+    this.transactionDate,
+    this.transactionDescription,
+    this.transactionBank,
+  });
+
   @override
-  State<Transactions> createState() => _Transactions();
+  _TransactionsState createState() => _TransactionsState();
 }
 
-class _Transactions extends State<Transactions> {
-  TextEditingController dateController = TextEditingController();
+class _TransactionsState extends State<Transactions> {
+  TransactionsSQLiteDatasource _transactionsDatasource =
+      TransactionsSQLiteDatasource();
+  TextEditingController _valueController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  DateTime? selectedDate;
+  String _category = "";
 
   @override
-  void initState() {
-    dateController.text = ""; //set the initial value of text field
-    super.initState();
+  void dispose() {
+    _dateController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-          padding: const EdgeInsets.all(0),
-          child: ListView(children: <Widget>[
-            Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.fromLTRB(50, 50, 50, 6),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: DARK_COLOR,
-              child: ListView(children: <Widget>[
-                Text(
-                  'Receita',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
+      backgroundColor: Color.fromARGB(255, 1, 22, 32),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      color: widget.title.toUpperCase() == 'RECEITA'
+                          ? Colors.green
+                          : Colors.red,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 35,
-                ),
-                valueField(),
                 TextField(
-                  controller:
-                      dateController, //editing controller of this TextField
-                  style: TextStyle(color: Colors.white),
+                  controller: _valueController,
                   decoration: InputDecoration(
+                    labelText: 'Valor',
+                    prefixIcon: Icon(Icons.calculate, color: Colors.white),
                     enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                      color: LIGHT_COLOR,
-                    )),
-                    label: Text(
-                      "Enter Date",
-                      style: TextStyle(color: LIGHT_COLOR),
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
                     ),
-                    icon: Icon(
-                      Icons.calendar_today,
-                      color: LIGHT_COLOR,
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
                     ),
+                    labelStyle: TextStyle(color: Colors.white),
                   ),
-
-                  readOnly: true, // when true user cannot edit text
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                    CurrencyInputFormatter(),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Data',
+                    prefixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  controller: _dateController,
+                  keyboardType: TextInputType.datetime,
                   onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(), //get today's date
-                        firstDate: DateTime(
-                            2000), //DateTime.now() - not to allow to choose before today.
-                        lastDate: DateTime(2101));
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
 
                     if (pickedDate != null) {
-                      print(
-                          pickedDate); //get the picked date in the format => 2022-07-04 00:00:00.000
-                      String formattedDate = DateFormat('dd/MM/yyyy').format(
-                          pickedDate); // format date in required form here we use dd/MM/yyyy that means time is removed
-                      print(formattedDate);
-
                       setState(() {
-                        dateController.text =
-                            formattedDate; //set foratted date to TextField value.
+                        selectedDate = pickedDate;
+                        _dateController.text =
+                            DateFormat('dd/MM/yyyy').format(selectedDate!);
                       });
-                    } else {
-                      print("Date is not selected");
                     }
                   },
+                  style: TextStyle(color: Colors.white),
                 ),
-                descField(),
-                SizedBox(
-                  height: 10,
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Descrição',
+                    prefixIcon: Icon(Icons.edit, color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
-                DropdownButtonField(),
-                SizedBox(
-                  height: 10,
+                SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Categoria',
+                    prefixIcon: Icon(Icons.tag, color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(190, 0, 255, 255)),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: 'item1',
+                      child: Container(
+                        color:
+                            DARK_COLOR, // Set the background color of the item
+                        child: Text(
+                          'Item 1',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'item2',
+                      child: Container(
+                        color:
+                            DARK_COLOR, // Set the background color of the item
+                        child: Text(
+                          'Item 2',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'item3',
+                      child: Container(
+                        color:
+                            DARK_COLOR, // Set the background color of the item
+                        child: Text(
+                          'Item 3',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    setState(() {
+                      _category = val!;
+                    });
+                  },
+                  style: TextStyle(color: Colors.white),
                 ),
-                saveButton(),
-              ]),
+                SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    String value = _valueController.text.replaceAll(",", "");
+                    DateTime date = selectedDate!;
+                    String description = _descriptionController.text;
+                    String category = _category;
+
+                    TransactionEntity newTransaction = TransactionEntity(
+                      type: widget.title,
+                      value: double.parse(value),
+                      description: description,
+                      date: date,
+                      category: category,
+                    );
+
+                    print(newTransaction.toMap());
+                    int insertedId = await _transactionsDatasource
+                        .insertTransaction(newTransaction);
+
+                    if (insertedId != -1) {
+                      print(
+                          'Successfully inserted transaction with id: $insertedId');
+                      // Transaction inserted successfully
+                      // Do something, such as showing a success message or navigating back
+                    } else {
+                      print('Error to insert transaction');
+                      // Failed to insert transaction
+                      // Do something, such as showing an error message
+                    }
+                  },
+                  child: Text('Salvar'),
+                ),
+              ],
             ),
-          ])),
-    );
-  }
-}
-
-Widget valueField() {
-  return TextFormField(
-      keyboardType: TextInputType.number,
-      validator: (val) {
-        if (val == 0) {
-          return "Valor nao pode ser zero";
-        } else {
-          return null;
-        }
-      },
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-          color: LIGHT_COLOR,
-        )),
-        label: Text(
-          "R\$",
-          style: TextStyle(color: LIGHT_COLOR),
-        ),
-        icon: Icon(
-          Icons.calculate,
-          color: LIGHT_COLOR,
-        ),
-      ));
-}
-
-Widget descField() {
-  return TextFormField(
-      keyboardType: TextInputType.text,
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-          color: LIGHT_COLOR,
-        )),
-        label: Text(
-          "Descrição",
-          style: TextStyle(color: LIGHT_COLOR),
-        ),
-        icon: Icon(
-          Icons.calculate,
-          color: LIGHT_COLOR,
-        ),
-      ));
-}
-
-class DropdownButtonField extends StatefulWidget {
-  const DropdownButtonField({super.key});
-
-  @override
-  State<DropdownButtonField> createState() => _DropdownButtonState();
-}
-
-class _DropdownButtonState extends State<DropdownButtonField> {
-  String dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      alignment: Alignment.bottomLeft,
-      dropdownColor: DARK_COLOR,
-      value: dropdownValue,
-      icon: const Icon(
-        Icons.arrow_downward,
-        color: LIGHT_COLOR,
-      ),
-      underline: Container(
-        height: 0,
-      ),
-      elevation: 16,
-      style: const TextStyle(color: LIGHT_COLOR),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-}
-
-Widget saveButton() {
-  return Container(
-      height: 40,
-      width: 100,
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: ElevatedButton(
-        child: const Text(
-          'Salvar',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
           ),
         ),
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green, elevation: 5),
-        onPressed: () {},
-      ));
+      ),
+    );
+  }
+}
+
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String numericValue = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (numericValue.length >= 2) {
+      String wholeNumber = numericValue.substring(0, numericValue.length - 2);
+      String decimalPart = numericValue.substring(numericValue.length - 2);
+
+      String formattedWholeNumber = '';
+      for (int i = wholeNumber.length - 1, count = 0; i >= 0; i--, count++) {
+        if (count == 3) {
+          formattedWholeNumber = ',' + formattedWholeNumber;
+          count = 0;
+        }
+        formattedWholeNumber = wholeNumber[i] + formattedWholeNumber;
+      }
+
+      String formattedValue = '$formattedWholeNumber.$decimalPart';
+
+      String finalValue = formattedValue;
+
+      return TextEditingValue(
+        text: finalValue,
+        selection: TextSelection.collapsed(offset: finalValue.length),
+      );
+    }
+
+    return newValue;
+  }
+}
+
+String formatCurrency(String inputValue) {
+  // Remove non-numeric characters
+  String numericValue = inputValue.replaceAll(RegExp(r'\D'), '');
+
+  // Split the value into whole number and decimal parts
+  String wholeNumber = numericValue.substring(0, numericValue.length - 2);
+  String decimalPart = numericValue.substring(numericValue.length - 2);
+
+  // Format the whole number part with commas
+  String formattedWholeNumber = '';
+  for (int i = wholeNumber.length - 1, count = 0; i >= 0; i--, count++) {
+    if (count == 3) {
+      formattedWholeNumber = ',' + formattedWholeNumber;
+      count = 0;
+    }
+    formattedWholeNumber = wholeNumber[i] + formattedWholeNumber;
+  }
+
+  // Combine the formatted whole number and decimal part with a decimal point
+  String formattedValue = '$formattedWholeNumber.$decimalPart';
+
+  return 'R\$ $formattedValue';
 }
