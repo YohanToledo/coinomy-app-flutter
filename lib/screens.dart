@@ -1,5 +1,5 @@
 import 'package:coinomy/global-constants.dart';
-import 'package:coinomy/_transactions.dart';
+import 'package:coinomy/transactions.dart';
 import 'package:coinomy/home.dart';
 import 'package:coinomy/preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,15 +67,14 @@ class _ScreenState extends State<Screens> {
                     GestureDetector(
                       onTap: () {
                         closeTransactionOptionsModal();
-                        // Navigate to the Transactions screen and open the modal
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Transactions(
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Transactions(
                               title: "RECEITA",
                               transactionId: 1,
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
                       child: Row(
@@ -89,14 +88,14 @@ class _ScreenState extends State<Screens> {
                       onTap: () {
                         closeTransactionOptionsModal();
                         // Navigate to the Transactions screen and open the modal
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Transactions(
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Transactions(
                               title: "DESPESA",
                               transactionId: 2,
-                            ),
-                          ),
+                            );
+                          },
                         );
                       },
                       child: Row(
@@ -147,94 +146,3 @@ class _ScreenState extends State<Screens> {
     );
   }
 }
-
-// class Screens extends StatefulWidget {
-//   Screens() : super();
-
-//   @override
-//   _ScreenState createState() => _ScreenState();
-// }
-
-// class _ScreenState extends State<Screens> {
-//   int currentTabIndex = 0;
-//   List<Widget> tabs = [
-//     Home(),
-//     Container(), // Placeholder for Transactions modal
-//     Preferences()
-//   ];
-
-//   onTapped(int index) {
-//     setState(() {
-//       currentTabIndex = index;
-//     });
-
-//     if (index == 1) {
-//       showModalBottomSheet(
-//         context: context,
-//         isScrollControlled: true,
-//         builder: (BuildContext context) => Container(
-//           height: MediaQuery.of(context).size.height * 0.8,
-//           color: Colors.transparent,
-//           child: Transactions(
-//             title: "RECEITA",
-//             transactionId: 1,
-//             // onSave: (transaction) {
-//             //   // Implement your save logic here
-//             //   Navigator.pop(context); // Close the modal
-//             // },
-//           ),
-//         ),
-//       ).then((value) {
-//         // Handle modal closure
-//         setState(() {
-//           currentTabIndex = 0; // Reset to the first tab
-//         });
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: tabs[currentTabIndex],
-//       bottomNavigationBar: Container(
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           //border: Border(top: BorderSide(color: LIGHT_COLOR, width: 1.0)),
-//         ),
-//         child: BottomNavigationBar(
-//           onTap: onTapped,
-//           currentIndex: currentTabIndex,
-//           showSelectedLabels: false,
-//           showUnselectedLabels: true,
-//           backgroundColor: NAV_BAR_COLOR,
-//           items: const <BottomNavigationBarItem>[
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.home,
-//                 color: LIGHT_COLOR,
-//               ),
-//               label: "",
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.add_circle_outline,
-//                 color: LIGHT_COLOR,
-//               ),
-//               label: "",
-//               backgroundColor: DARK_COLOR,
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 CupertinoIcons.ellipsis,
-//                 color: LIGHT_COLOR,
-//               ),
-//               label: "",
-//               backgroundColor: DARK_COLOR,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

@@ -1,7 +1,7 @@
 import 'package:coinomy/login.dart';
-import 'package:coinomy/register.dart';
-import 'package:coinomy/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 void main() {
   runApp(const MyApp());

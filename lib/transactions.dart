@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:coinomy/db/database_helper.dart';
+import 'package:coinomy/db/transactions_datasource.dart';
 import 'package:coinomy/global-constants.dart';
+import 'package:coinomy/model/transaction_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +30,13 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState extends State<Transactions> {
+  TransactionsSQLiteDatasource _transactionsDatasource =
+      TransactionsSQLiteDatasource();
+  TextEditingController _valueController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
+  DateTime? selectedDate;
+  String _category = "";
 
   @override
   void dispose() {
@@ -60,6 +69,7 @@ class _TransactionsState extends State<Transactions> {
                   ),
                 ),
                 TextField(
+                  controller: _valueController,
                   decoration: InputDecoration(
                     labelText: 'Valor',
                     prefixIcon: Icon(Icons.calculate, color: Colors.white),
@@ -98,19 +108,18 @@ class _TransactionsState extends State<Transactions> {
                   controller: _dateController,
                   keyboardType: TextInputType.datetime,
                   onTap: () async {
-                    final DateTime? selectedDate = await showDatePicker(
+                    final DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
                     );
 
-                    if (selectedDate != null) {
-                      final formattedDate =
-                          DateFormat('dd/MM/yyyy').format(selectedDate);
+                    if (pickedDate != null) {
                       setState(() {
+                        selectedDate = pickedDate;
                         _dateController.text =
-                            formattedDate; // Update the field value
+                            DateFormat('dd/MM/yyyy').format(selectedDate!);
                       });
                     }
                   },
@@ -118,6 +127,7 @@ class _TransactionsState extends State<Transactions> {
                 ),
                 SizedBox(height: 16.0),
                 TextField(
+                  controller: _descriptionController,
                   decoration: InputDecoration(
                     labelText: 'Descrição',
                     prefixIcon: Icon(Icons.edit, color: Colors.white),
@@ -183,12 +193,44 @@ class _TransactionsState extends State<Transactions> {
                       ),
                     ),
                   ],
-                  onChanged: (val) {},
+                  onChanged: (val) {
+                    setState(() {
+                      _category = val!;
+                    });
+                  },
                   style: TextStyle(color: Colors.white),
                 ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    String value = _valueController.text.replaceAll(",", "");
+                    DateTime date = selectedDate!;
+                    String description = _descriptionController.text;
+                    String category = _category;
+
+                    TransactionEntity newTransaction = TransactionEntity(
+                      type: widget.title,
+                      value: double.parse(value),
+                      description: description,
+                      date: date,
+                      category: category,
+                    );
+
+                    print(newTransaction.toMap());
+                    int insertedId = await _transactionsDatasource
+                        .insertTransaction(newTransaction);
+
+                    if (insertedId != -1) {
+                      print(
+                          'Successfully inserted transaction with id: $insertedId');
+                      // Transaction inserted successfully
+                      // Do something, such as showing a success message or navigating back
+                    } else {
+                      print('Error to insert transaction');
+                      // Failed to insert transaction
+                      // Do something, such as showing an error message
+                    }
+                  },
                   child: Text('Salvar'),
                 ),
               ],
