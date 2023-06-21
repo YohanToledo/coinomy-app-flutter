@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:coinomy/global-constants.dart';
+import 'package:coinomy/login.dart';
+import 'package:coinomy/model/transaction_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -157,7 +159,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget Card(context, Transaction transaction) {
+  Widget Card(context, TransactionEntity transaction) {
     return Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: 60,
@@ -165,24 +167,24 @@ class _HomeState extends State<Home> {
         margin: EdgeInsets.fromLTRB(0, 6, 0, 6),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: transaction.tipo == "RECEITA"
+            color: transaction.type == "RECEITA"
                 ? const Color.fromARGB(167, 76, 175, 79)
                 : const Color.fromARGB(143, 244, 67, 54)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Icon(
-              CategoryIcons[transaction.icone],
+              Icons.monetization_on_outlined,
               color: Colors.white,
             ),
             SizedBox(
               width: 20,
             ),
             Text(
-              transaction.descricao,
+              transaction.description,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: FONT_TITLE_SIZE,
+                fontSize: 16,
               ),
             ),
             SizedBox(
@@ -190,47 +192,95 @@ class _HomeState extends State<Home> {
             ),
             Text(
               isVisibleValues
-                  ? "R\$ " + transaction.valor.toStringAsFixed(2)
+                  ? "R\$ " + transaction.value.toStringAsFixed(2)
                   : "R\$ *********",
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: FONT_TITLE_SIZE,
+                fontSize: 16,
               ),
             ),
+            SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: NAV_BAR_COLOR),
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: NAV_BAR_COLOR),
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            )),
           ],
         ));
   }
 }
 
-const CategoryIcons = {
-  "cifrao": Icons.monetization_on_outlined,
-  "carrinho_mercado": Icons.shopping_cart_outlined,
-  "bomba_combustivel": Icons.local_gas_station_outlined,
-  "health": Icons.healing_rounded,
-};
+// const CategoryIcons = {
+//   "cifrao": Icons.monetization_on_outlined,
+//   "carrinho_mercado": Icons.shopping_cart_outlined,
+//   "bomba_combustivel": Icons.local_gas_station_outlined,
+//   "health": Icons.healing_rounded,
+// };
 
-class Transaction {
-  int? id;
-  String descricao = "";
-  double valor = 0;
-  String tipo = "";
-  String icone = "";
-
-  Transaction(
-      int? id, String descricao, double valor, String tipo, String icone) {
-    this.id = id;
-    this.descricao = descricao;
-    this.valor = valor;
-    this.tipo = tipo;
-    this.icone = icone;
-  }
-}
-
-final List<Transaction> transactions = [
-  Transaction(1, "teste", 200.0, "RECEITA", "cifrao"),
-  Transaction(2, "compras mercado", 159.80, "DESPESA", "carrinho_mercado"),
-  Transaction(3, "gasosa", 80.0, "DESPESA", "bomba_combustivel"),
-  Transaction(4, "salario", 5000.0, "RECEITA", "cifrao"),
-  Transaction(5, "Desodorante rexona", 27.50, "DESPESA", "health"),
+final List<TransactionEntity> transactions = [
+  TransactionEntity(
+    id: 1,
+    value: 5000.0,
+    type: "RECEITA",
+    description: "Salario",
+    category: "salario",
+    date: DateTime.now(),
+  ),
+  TransactionEntity(
+    id: 2,
+    value: 350.0,
+    type: "DESPESA",
+    description: "Compras mercado",
+    category: "mercado",
+    date: DateTime.now(),
+  ),
+  TransactionEntity(
+    id: 3,
+    value: 150.0,
+    type: "DESPESA",
+    description: "Gasolina",
+    category: "combustivel",
+    date: DateTime.now(),
+  ),
+  TransactionEntity(
+    id: 5,
+    value: 35.0,
+    type: "DESPESA",
+    description: "Lanche ifood",
+    category: "ifood",
+    date: DateTime.now(),
+  ),
 ];

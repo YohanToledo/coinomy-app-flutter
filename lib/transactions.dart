@@ -203,33 +203,26 @@ class _TransactionsState extends State<Transactions> {
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
-                    String value = _valueController.text.replaceAll(",", "");
-                    DateTime date = selectedDate!;
-                    String description = _descriptionController.text;
-                    String category = _category;
+                    String? value = _valueController.text.replaceAll(",", "");
+                    DateTime date = selectedDate ?? DateTime.now();
+                    String? description = _descriptionController.text;
+                    String? category = _category;
 
-                    TransactionEntity newTransaction = TransactionEntity(
-                      type: widget.title,
-                      value: double.parse(value),
-                      description: description,
-                      date: date,
-                      category: category,
-                    );
+                    if (isValidFields(value, date, description, category)) {
+                      TransactionEntity newTransaction = TransactionEntity(
+                        type: widget.title,
+                        value: double.parse(value),
+                        description: description,
+                        date: date,
+                        category: category,
+                      );
 
-                    print(newTransaction.toMap());
-                    int insertedId = await _transactionsDatasource
-                        .insertTransaction(newTransaction);
-
-                    if (insertedId != -1) {
-                      print(
-                          'Successfully inserted transaction with id: $insertedId');
-                      // Transaction inserted successfully
-                      // Do something, such as showing a success message or navigating back
-                    } else {
-                      print('Error to insert transaction');
-                      // Failed to insert transaction
-                      // Do something, such as showing an error message
+                      print(newTransaction.toMap());
                     }
+
+                    Navigator.pop(context);
+                    // int insertedId = await _transactionsDatasource
+                    //     .insertTransaction(newTransaction);
                   },
                   child: Text('Salvar'),
                 ),
@@ -239,6 +232,26 @@ class _TransactionsState extends State<Transactions> {
         ),
       ),
     );
+  }
+
+  bool isValidFields(value, date, description, category) {
+    if (value == null || value == "") {
+      return false;
+    }
+
+    if (date == null || date == "") {
+      return false;
+    }
+
+    if (description == null || description == "") {
+      return false;
+    }
+
+    if (category == null || category == "") {
+      return false;
+    }
+
+    return true;
   }
 }
 
@@ -275,28 +288,4 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     return newValue;
   }
-}
-
-String formatCurrency(String inputValue) {
-  // Remove non-numeric characters
-  String numericValue = inputValue.replaceAll(RegExp(r'\D'), '');
-
-  // Split the value into whole number and decimal parts
-  String wholeNumber = numericValue.substring(0, numericValue.length - 2);
-  String decimalPart = numericValue.substring(numericValue.length - 2);
-
-  // Format the whole number part with commas
-  String formattedWholeNumber = '';
-  for (int i = wholeNumber.length - 1, count = 0; i >= 0; i--, count++) {
-    if (count == 3) {
-      formattedWholeNumber = ',' + formattedWholeNumber;
-      count = 0;
-    }
-    formattedWholeNumber = wholeNumber[i] + formattedWholeNumber;
-  }
-
-  // Combine the formatted whole number and decimal part with a decimal point
-  String formattedValue = '$formattedWholeNumber.$decimalPart';
-
-  return 'R\$ $formattedValue';
 }
