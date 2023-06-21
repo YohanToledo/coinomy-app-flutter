@@ -145,6 +145,7 @@ class _TransactionsState extends State<Transactions> {
                 ),
                 SizedBox(height: 16.0),
                 DropdownButtonFormField<String>(
+                  dropdownColor: NAV_BAR_COLOR,
                   decoration: InputDecoration(
                     labelText: 'Categoria',
                     prefixIcon: Icon(Icons.tag, color: Colors.white),
@@ -158,38 +159,28 @@ class _TransactionsState extends State<Transactions> {
                     ),
                     labelStyle: TextStyle(color: Colors.white),
                   ),
-                  items: [
+                  items: const [
                     DropdownMenuItem<String>(
-                      value: 'item1',
-                      child: Container(
-                        color:
-                            DARK_COLOR, // Set the background color of the item
-                        child: Text(
-                          'Item 1',
-                          style: TextStyle(color: Colors.white),
+                      value: 'mercado',
+                      child: Text(
+                        'Mercado',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: 'salario',
+                      child: Text(
+                        'Salario',
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
                       ),
                     ),
                     DropdownMenuItem<String>(
-                      value: 'item2',
-                      child: Container(
-                        color:
-                            DARK_COLOR, // Set the background color of the item
-                        child: Text(
-                          'Item 2',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'item3',
-                      child: Container(
-                        color:
-                            DARK_COLOR, // Set the background color of the item
-                        child: Text(
-                          'Item 3',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                      value: 'combustivel',
+                      child: Text(
+                        'Combustivel',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
