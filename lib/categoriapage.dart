@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:coinomy/global-constants.dart';
 import 'package:flutter/material.dart';
 
 import 'database/databasemanager.dart';
@@ -16,36 +19,84 @@ class _CategoriaPageState extends State<CategoriaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: DARK_COLOR,
       appBar: AppBar(
-        title: Text('Categorias'),
+        backgroundColor: LIGHT_COLOR,
+        title: Text('Categorias', style: TextStyle(color: DARK_COLOR)),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                _adicionarCategoria();
-              },
-              child: Text('Adicionar categoria'),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Categorias:',
-              style: TextStyle(fontSize: 18),
-            ),
             SizedBox(height: 10),
             Expanded(
-              child: ListView.builder(
-                itemCount: categorias.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(categorias[index].nome),
-                    subtitle: Text(categorias[index].tipo),
-                  );
-                },
+                child: ListView(children: const [
+              ListTile(
+                iconColor: Colors.white,
+                trailing: Icon(Icons.arrow_right_sharp),
+                tileColor: NAV_BAR_COLOR,
+                textColor: Colors.white,
+                title: Text("Salario"),
+                subtitle: Text(
+                  "RECEITA",
+                  style: TextStyle(color: Colors.green),
+                ),
               ),
-            ),
+              ListTile(
+                iconColor: Colors.white,
+                trailing: Icon(Icons.arrow_right_sharp),
+                tileColor: NAV_BAR_COLOR,
+                textColor: Colors.white,
+                title: Text("Presente"),
+                subtitle: Text(
+                  "RECEITA",
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
+              ListTile(
+                iconColor: Colors.white,
+                trailing: Icon(Icons.arrow_right_sharp),
+                tileColor: NAV_BAR_COLOR,
+                textColor: Colors.white,
+                title: Text("Mercado"),
+                subtitle: Text(
+                  "DESPESA",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              ListTile(
+                iconColor: Colors.white,
+                trailing: Icon(Icons.arrow_right_sharp),
+                tileColor: NAV_BAR_COLOR,
+                textColor: Colors.white,
+                title: Text("Combustivel"),
+                subtitle: Text(
+                  "DESPESA",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              ListTile(
+                iconColor: Colors.white,
+                trailing: Icon(Icons.arrow_right_sharp),
+                tileColor: NAV_BAR_COLOR,
+                textColor: Colors.white,
+                title: Text("Farmacia"),
+                subtitle: Text(
+                  "DESPESA",
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ])
+                // child: ListView.builder(
+                //   itemCount: categorias.length,
+                //   itemBuilder: (context, index) {
+                //     return ListTile(
+                //       title: Text(categorias[index].nome),
+                //       subtitle: Text(categorias[index].tipo),
+                //     );
+                //   },
+                // ),
+                ),
           ],
         ),
       ),
